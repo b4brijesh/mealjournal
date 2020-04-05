@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @MappedSuperclass
@@ -17,7 +18,9 @@ import java.util.Date;
         generator = ObjectIdGenerators.StringIdGenerator.class,
         property = "id"
 )
-public abstract class Auditable {
+
+// implements Serializable is important
+public abstract class Auditable implements Serializable {
 
     @Id
     @GeneratedValue(generator = "sequence", strategy = GenerationType.SEQUENCE)

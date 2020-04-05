@@ -1,13 +1,14 @@
 package com.mealjournal.app.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,24 +23,27 @@ public abstract class Client extends Auditable{
     private String email;
 
     @NotBlank
-    @Getter @Setter //todo: custom setter below
+    @Getter //todo:
     private String saltedHashedPass;
 
-    /*public void setSaltedHashedPassword(String password) {
-        saltedHashedPassword = new BCryptPasswordEncoder(8).encode(password);
-    }
-
     @ManyToMany(fetch = FetchType.EAGER)
-    @Getter @Setter
-    Set<Role> roles = new HashSet<>();
+    @JsonManagedReference
+    @Getter
+    @Setter
+    private Set<Role> roles;
+
+    // custom password encryption setter below
+    public void setSaltedHashedPass(String rawPassword) {
+        saltedHashedPass = new BCryptPasswordEncoder(6).encode(rawPassword);
+    }
 
     public Client() {}
 
-    //copy constructor
-    public Client(Client user) {
-        email = user.getEmail();
-        saltedHashedPassword = user.getSaltedHashedPassword();
-        roles = user.getRoles();
-    }*/
+    //copy constructor for userDetails in authentication
+    public Client(Client client) {
+        email = client.getEmail();
+        saltedHashedPass = client.getSaltedHashedPass();
+        roles = client.getRoles();
+    }
 
 }

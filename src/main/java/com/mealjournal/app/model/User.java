@@ -12,6 +12,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.ZoneId;
 import java.util.*;
 
 @Entity
@@ -120,30 +121,24 @@ public class User extends Client {
         }
     }
 
-    // if server and client are in different time zones, there is rare chance of this giving wrong output
-    /*public Integer calculateAge() {
+    // if server and client are in different time zones, there is a rare chance of this giving wrong output
+    public Integer calculateAge() {
         LocalDate currentDate = LocalDate.now();
+        LocalDate birthDate = dob.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
         if (dob != null) {
-            return Period.between(dob, currentDate).getYears();
+            return Period.between(birthDate, currentDate).getYears();
         }
         return null;
-    }*/
+    }
 
     public void addMeal(Meal meal) {
-        //if (meal == null) return ;
         meals.add(meal);
     }
 
     public void removeMeal(Meal meal) {
-        //if (meal == null) return ;
         meals.remove(meal);
-    }
-
-    public void editMeal(Meal oldMeal, Meal newMeal) {
-        //todo: check if user of both meals' users are same or if it's the admin
-        oldMeal.setMealName(newMeal.getMealName());
-        oldMeal.setMealDateTime(newMeal.getMealDateTime());
-        oldMeal.setCalories(newMeal.getCalories());
     }
 
     //todo: calculating mealColor would require creating a MealDate class from which meals extend - think more on this
