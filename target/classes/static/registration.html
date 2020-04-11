@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Meal Journal: Sign Up</title>
+    <link rel="stylesheet" href="css/registration.css">
+</head>
+<body>
+<div>
+    <h2>SignUp page</h2>
+    <form id="signUpApp" @submit="checkForm" action="/signup" method="post">
+        <p>
+            <label for="fullname">Name</label>
+            <input id="fullname" v-model="fullname" type="text" name="fullname">
+        </p>
+
+        <p>
+            <label for="username">Email</label>
+            <input id="username" v-model="username" type="text" name="username">
+        </p>
+
+        <p>
+            <label for="password">Password</label>
+            <input id="password" v-model="password" type="password" name="password">
+        </p>
+
+        <p>
+            <input type="submit" value="Submit">
+        </p>
+    </form>
+    <div>
+        <a href="/login">Already registered? Login</a>
+    </div>
+</div>
+</body>
+</html>

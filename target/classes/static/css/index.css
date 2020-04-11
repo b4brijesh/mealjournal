@@ -1,0 +1,27 @@
+
+* {
+    box-sizing: border-box; /* width and height properties include content, padding and border*/
+}
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+#banner {
+    margin: 1em;
+    background-color: #339966;
+    color: #ffffff;
+    /*padding: 1em;*/
+}
+
+#banner > h3 {
+    margin: 0.3em;
+}
+
+.row {
+    /*margin: 1em;*/
+}
+
+.meal-card {
+    color: #ffffff;
+}
+

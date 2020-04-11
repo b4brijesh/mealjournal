@@ -18,9 +18,7 @@ import java.util.Date;
         generator = ObjectIdGenerators.StringIdGenerator.class,
         property = "id"
 )
-
-// implements Serializable is important
-public abstract class Auditable implements Serializable {
+public abstract class Auditable implements Serializable { // implements Serializable is important
 
     @Id
     @GeneratedValue(generator = "sequence", strategy = GenerationType.SEQUENCE)

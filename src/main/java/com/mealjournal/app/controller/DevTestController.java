@@ -46,28 +46,37 @@ public class DevTestController {
     @GetMapping("/populate")
     public String populateDB() {
         userRepository.deleteAll();
+        mealRepository.deleteAll();
 
-        User shashank = new User.Builder().name("Shashank Raj")
-                .email("shashank@meals.com")
-                .saltedHashedPass("shawshank")
-                .build();
-        //userRepository.save(shashank);
+        User shashank = new User();
+        shashank.setName("Shashank Raj");
+        shashank.setEmail("shashank@meals.com");
+        shashank.setSaltedHashedPass("shawshank");
+        userRepository.save(shashank);
 
-        User sushant = new User.Builder().name("Sushant Sharma")
-                .email("sushant@meals.com")
-                .saltedHashedPass("chhote")
-                .build();
-        //userRepository.save(sushant);
+        User sushant = new User();
+        sushant.setName("Sushant Sharma");
+        sushant.setEmail("sushant@meals.com");
+        sushant.setSaltedHashedPass("chhote");
+        userRepository.save(sushant);
 
-        Meal breakfast = new Meal.Builder().mealName("Bread")
+        Meal breakfast = new Meal.Builder()
+                .user(shashank)
+                .mealName("Bread")
                 .mealDateTime(new Date())
                 .calories(200)
                 .build();
-        Meal dinner = new Meal.Builder().mealName("Pizza")
+        mealRepository.save(breakfast);
+        Meal dinner = new Meal.Builder()
+                .user(sushant)
+                .mealName("Pizza")
                 .mealDateTime(new Date())
                 .calories(600)
                 .build();
+        mealRepository.save(dinner);
 
+        System.out.println(breakfast.getUser().getId());
+        System.out.println(dinner.getUser().getId());
         shashank.addMeal(breakfast);
         userRepository.save(shashank);
         sushant.addMeal(dinner);

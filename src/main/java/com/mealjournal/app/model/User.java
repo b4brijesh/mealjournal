@@ -46,7 +46,7 @@ public class User extends Client {
     @Getter
     @Setter
     @OrderBy(value = "meal_date_time asc")
-    private List<Meal> meals = new ArrayList<>();
+    private Set<Meal> meals = new HashSet<>();
 
     @Getter
     @Setter
@@ -55,8 +55,6 @@ public class User extends Client {
 
     public User() {}
     private User(Builder builder) {
-        setEmail(builder.email);
-        setSaltedHashedPass(builder.saltedHashedPass);
         setName(builder.name);
         setPicUrl(builder.picUrl);
         setDob(builder.dob);
@@ -67,24 +65,12 @@ public class User extends Client {
 
     //public User() {}
     public static final class Builder {
-        private @Email @NotBlank String email;
-        private @NotBlank String saltedHashedPass;
         private @NotBlank String name;
         private String picUrl;
         private Date dob;
         private Integer weight;
         private Integer height;
         private @Range(min = 100) Integer dailyCalorieGoal;
-
-        public Builder email(@Email @NotBlank String val) {
-            email = val;
-            return this;
-        }
-
-        public Builder saltedHashedPass(@NotBlank String val) {
-            saltedHashedPass = val;
-            return this;
-        }
 
         public Builder name(@NotBlank String val) {
             name = val;
@@ -134,11 +120,29 @@ public class User extends Client {
     }
 
     public void addMeal(Meal meal) {
+        if (!this.equals(meal.getUser())) {
+            System.out.println("different user"); //todo: throw actual error
+            return;
+        }
         meals.add(meal);
     }
 
     public void removeMeal(Meal meal) {
+        if (!this.equals(meal.getUser())) {
+            System.out.println("different user"); //todo: throw actual error
+            return;
+        }
         meals.remove(meal);
+    }
+
+    //a custom overloaded getter for meals
+    public Set<Meal> getMeals(Date startDate, Date stopDate) {
+        Set<Meal> queriedMeals = new HashSet<>();
+        for (Meal meal: meals) {
+            if (meal.getMealDateTime().after(startDate) && meal.getMealDateTime().before(stopDate))
+                queriedMeals.add(meal);
+        }
+        return queriedMeals;
     }
 
     //todo: calculating mealColor would require creating a MealDate class from which meals extend - think more on this

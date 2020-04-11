@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Meal Journal</title>
+    <!-- Load styles -->
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div id="app" class="container">
+    <div class="row rounded" id="banner">
+        <h1 class="col-sm-4" id="app-name">
+            Calorie Tracker
+        </h1>
+        <h3 class="col-sm-4 text-center" id="user-name">
+            Hi {{ userName }}!
+        </h3>
+        <div class="col-sm-2 btn">
+            <input type="button" value="Edit Profile" v-on:click="toggleViewProfile()" class="btn btn-primary shadow">
+        </div>
+        <div class="col-sm-1 btn">
+            <a href="/logout" class="btn btn-danger shadow">Logout</a>
+            <!--<button type="button" class="btn btn-md btn-danger" v-on:click="logout()">Logout</button>-->
+        </div>
+    </div>
+    <div class="container text-center" v-if="editProfileFlag">
+        <form class="align-items-center text-center" action="">
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="fullname">Name: </label>
+                <div class="col-auto">
+                    <input class="form-control mx-auto col-sm-6 text-center" type="text" v-model="profileEditData.fullname" id="fullname">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="dob">Birth Date: </label>
+                <div class="col-auto">
+                    <input class="form-control mx-auto col-sm-3 text-center" type="date" v-model="profileEditData.dob" id="dob">
+                </div>
+            </div>
+            <div class="form-group align-items-center">
+                <label class="control-label col-sm-4" for="height">Height: </label>
+                <div class="input-group mx-auto col-sm-3">
+                    <div class="mr-0 pr-0">
+                        <input class="form-control mr-0 pr-0" type="number" v-model="profileEditData.height" id="height">
+                    </div>
+                    <div class="input-group-append ml-0 pl-0">
+                        <span class="input-group-text">cm</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-4" for="weight">Weight: </label>
+                <div class="input-group mx-auto col-sm-3">
+                    <div class="mr-0 pr-0">
+                        <input class="form-control mr-0 pr-0" type="number" v-model="profileEditData.weight" id="weight">
+                    </div>
+                    <div class="input-group-append ml-0 pl-0">
+                        <span class="input-group-text">kg</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-4" for="goal">Daily Goal: </label>
+                <div class="input-group mx-auto col-sm-4">
+                    <div class="mr-0 pr-0 col-sm-8">
+                        <input class="form-control mr-0 pr-0" type="number" v-model="profileEditData.goal" id="goal">
+                    </div>
+                    <div class="input-group-append ml-0 pl-0 col-sm-4">
+                        <span class="input-group-text">calories</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1 btn">
+                <button type="button" class="btn btn-primary shadow" v-on:click="updateProfileData()">Save</button>
+            </div>
+        </form>
+    </div>
+    <hr>
+    <div id="add-meal" class="container text-center">
+        <div class="align-items-center">
+            <button v-if="!addMealFormVisible" class="col-sm-6 btn btn-primary shadow"
+                    v-on:click="toggleAddMealForm()">Add a meal</button>
+        </div>
+
+        <form class="align-items-center" v-if="addMealFormVisible" @submit="checkMealForm" action="" method="post">
+            <div class="col-auto">
+                <label class="control-label" for="newMealName">Name: </label>
+                <input class="form-control mx-auto col-sm-6 text-center" id="newMealName" v-model="newMealName" type="text" name="newMealName">
+            </div>
+            <div class="col-auto">
+                <label class="control-label" for="newMealDate">Date: </label>
+                <input class="form-control mx-auto col-sm-2 text-center" id="newMealDate" v-model="newMealDate" type="date" name="newMealDate">
+            </div>
+            <div class="control-label" class="col-auto">
+                <label for="newMealCalories">Calories: </label>
+                <input class="form-control mx-auto col-sm-1 text-center" id="newMealCalories" v-model="newMealCalories" type="number"
+                       name="newMealCalories">
+            </div>
+            <div class="m-2">
+                <div class="btn col-sm-1">
+                    <input type="submit" value="Submit" class="btn btn-primary shadow" @click.stop.prevent="addMeal()">
+                </div>
+                <div class="btn col-sm-1">
+                    <input type="button" value="Cancel" class="btn btn-secondary shadow" v-on:click="toggleAddMealForm()" class="btn btn-danger">
+                </div>
+            </div>
+        </form>
+    </div>
+    <hr>
+    <div class="container" id="meal-log">
+        <div class="row m-3" id="meals-header">
+            <h3 class="mx-auto">Meals</h3>
+        </div>
+        <div class="form-inline" id="meal-search">
+            <div class="row mx-auto">
+                <div class="input-group-prepend">
+                    <label class="control-label input-group-text" for="start">From:</label>
+                </div>
+                <input type="date" class="form-control text-center" v-model="periodStart" id="start">
+            </div>
+            <div class="row mx-auto">
+                <div class="input-group-prepend">
+                    <label class="control-label input-group-text" for="stop">To:</label>
+                </div>
+                <input type="date" class="form-control text-center" v-model="periodStop" id="stop">
+            </div>
+            <button type="button" class="btn btn-primary shadow mx-auto" v-on:click="fetchMeals()">Search</button>
+        </div>
+        <!-- convert to table-->
+        <div id="meals-data" class="container">
+            <table class="table mt-5">
+                <thead>
+                    <tr class="row text-center">
+                        <th class="col-sm-3">Meal Name</th>
+                        <th class="col-sm-3">Date</th>
+                        <th class="col-sm-3">Calories</th>
+                    </tr>
+                </thead>
+            </table>
+            <div v-for="meal in meals">
+                <div class="meal-card">
+                    <form v-if="editMealId === meal.mealId" @submit="checkMealForm" action="" method="post">
+                        <div class="form-row align-items-center">
+                            <div class="col-sm-3" >
+                                <input id="editMealName" v-model="editMealName" type="text" name="editMealName">
+                            </div>
+                            <div class="col-sm-3">
+                                <input id="editMealDate" v-model="editMealDate" type="date" name="editMealDate">
+                            </div>
+                            <div class="col-sm-3">
+                                <input id="editMealCalories" v-model="editMealCalories" type="number" name="editMealCalories">
+                            </div>
+                            <div class="col-auto">
+                                <input type="submit" value="Save" class="btn btn-sm btn-primary" @click.stop.prevent="editMeal()">
+                                <!--<button type="button" class="btn btn-default btn-sm" v-on:click="editMeal(meal.mealId)">
+                                    <span class="fas fa-save"></span> Save
+                                </button>-->
+                            </div>
+                            <div class="col-auto">
+                                <input type="button" value="Cancel" v-on:click="toggleEditMeal()"
+                                       class="btn btn-sm btn-danger">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row text-center align-items-center rounded" v-bind:style="{ background: meal.color}" v-else>
+                        <div class="col-sm-3" id="meal-name">
+                            {{ meal.mealName }}
+                        </div>
+                        <div class="col-sm-3" id="meal-date" v-text="formatDate(meal.mealDate)">
+                        </div>
+                        <div class="col-sm-3" id="meal-calories">
+                            {{ meal.mealCalories }}
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-default" v-on:click="toggleEditMeal(meal.mealId)">
+                                <span class="fas fa-edit"></span> Edit
+                            </button>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-default" v-on:click="removeMeal(meal.mealId)">
+                                <span class="fas fa-trash-alt"></span> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<!-- Load scripts -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://kit.fontawesome.com/d7b3a3a8fc.js"></script>
+<script src="js/app.js"></script>
+</html>

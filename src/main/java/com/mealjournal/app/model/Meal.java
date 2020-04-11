@@ -1,6 +1,7 @@
 package com.mealjournal.app.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
@@ -17,6 +18,7 @@ public class Meal extends Auditable{
 
     @ManyToOne
     @JsonBackReference
+    @NotNull
     @Getter
     @Setter
     private User user;
@@ -47,7 +49,7 @@ public class Meal extends Auditable{
     }
 
     public static final class Builder {
-        private User user;
+        private @NotNull User user;
         private @NotBlank String mealName;
         private @NotNull Date mealDateTime;
         private @NotNull @Range(min = 1) Integer calories;
@@ -55,7 +57,7 @@ public class Meal extends Auditable{
         public Builder() {
         }
 
-        public Builder user(User val) {
+        public Builder user(@NotNull User val) {
             user = val;
             return this;
         }

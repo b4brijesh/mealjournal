@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Meal Journal: Login</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+<div>
+    <h2>Login page</h2>
+    <form id="loginApp" @submit="checkForm" action="/login" method="post">
+        <p>
+            <label for="username">Email</label>
+            <input id="username" v-model="username" type="text" name="username">
+        </p>
+
+        <p>
+            <label for="password">Password</label>
+            <input id="password" v-model="password" type="password" name="password">
+        </p>
+
+        <p>
+            <input type="submit" value="Submit">
+        </p>
+    </form>
+    <div>
+        <a href="/signup">Sign Up instead?</a>
+    </div>
+</div>
+</body>
+</html>
